@@ -1,0 +1,147 @@
+--SQL Assignment 5
+--Insert Data
+--2022.1.5
+
+
+--================================================================================
+--logistics_center
+--center 1
+insert into ucesxuf.logistics_center (center_name, location)
+values
+('Logistics Center 1', st_extrude(st_geomfromtext('POLYGON((1000 1000 0, 1100 1000 0, 1100 1100 0, 1000 1100 0, 1000 1000 0))',27700),0,0,300));
+--center 2
+insert into ucesxuf.logistics_center (center_name, location)
+values
+('Logistics Center 2', st_extrude(st_geomfromtext('POLYGON((1200 1000 0, 1300 1000 0, 1300 1100 0, 1200 1100 0, 1200 1000 0))',27700),0,0,300));
+--center 3
+insert into ucesxuf.logistics_center (center_name, location)
+values
+('Logistics Center 3', st_extrude(st_geomfromtext('POLYGON((1400 1000 0, 1500 1000 0, 1500 1100 0, 1400 1100 0, 1400 1000 0))',27700),0,0,300));
+--================================================================================
+
+
+--================================================================================
+--storeroom
+--storeroom for center 1
+insert into ucesxuf.storeroom (floor, room_number, worker_number, location, center_id)
+values
+(
+	0,
+	'LC.1-G.1',
+	1,
+ 	st_geomfromtext('POLYGON ((1000 1000 0, 1070 1000 0, 1070 1070 0, 1000 1070 0, 1000 1000 0))',27700),
+	(select center_id from ucesxuf.logistics_center c where st_3dintersects(c.location, st_geomfromtext('POLYGON ((1000 1000 0, 1070 1000 0, 1070 1070 0, 1000 1070 0, 1000 1000 0))',27700)))
+);
+
+insert into ucesxuf.storeroom (floor, room_number, worker_number, location, center_id)
+values
+(
+	1, 
+	'LC.1-1.1', 
+	3,
+	st_geomfromtext('POLYGON ((1070 1070 300, 1100 1070 300, 1100 1100 300, 1070 1100 300, 1070 1070 300))',27700),
+	(select center_id from ucesxuf.logistics_center c where st_3dintersects(c.location, st_geomfromtext('POLYGON ((1070 1070 300, 1100 1070 300, 1100 1100 300, 1070 1100 300, 1070 1070 300))',27700)))
+);
+
+--storeroom for center 2
+insert into ucesxuf.storeroom (floor, room_number, worker_number, location, center_id)
+values
+(
+	0,
+	'LC.2-G.1',
+	2,
+	st_geomfromtext('POLYGON ((1200 1000 0, 1260 1000 0, 1260 1060 0, 1200 1060 0, 1200 1000 0))',27700),
+	(select center_id from ucesxuf.logistics_center c where st_3dintersects(c.location, st_geomfromtext('POLYGON ((1200 1000 0, 1260 1000 0, 1260 1060 0, 1200 1060 0, 1200 1000 0))',27700)))
+);
+
+insert into ucesxuf.storeroom (floor, room_number, worker_number, location, center_id)
+values
+(
+	1,
+	'LC.2-1.1',
+	4,
+	st_geomfromtext('POLYGON ((1260 1060 300, 1300 1060 300, 1300 1100 300, 1260 1100 300, 1260 1060 300))',27700),
+	(select center_id from ucesxuf.logistics_center c where st_3dintersects(c.location, st_geomfromtext('POLYGON ((1260 1060 300, 1300 1060 300, 1300 1100 300, 1260 1100 300, 1260 1060 300))',27700)))
+);
+
+--storeroom for center 3
+insert into ucesxuf.storeroom (floor, room_number, worker_number, location, center_id)
+values
+(
+	0,
+	'LC.3-G.1',
+	2,
+	st_geomfromtext('POLYGON ((1400 1000 0, 1450 1000 0, 1450 1050 0, 1400 1050 0, 1400 1000 0))',27700),
+	(select center_id from ucesxuf.logistics_center c where st_3dintersects(c.location, st_geomfromtext('POLYGON ((1400 1000 0, 1450 1000 0, 1450 1050 0, 1400 1050 0, 1400 1000 0))',27700)))
+);
+
+insert into ucesxuf.storeroom (floor, room_number, worker_number, location, center_id)
+values
+(
+	1,
+	'LC.3-1.1',
+	1,
+	st_geomfromtext('POLYGON ((1450 1050 300, 1500 1050 300, 1500 1100 300, 1450 1100 300, 1450 1050 300))',27700),
+	(select center_id from ucesxuf.logistics_center c where st_3dintersects(c.location, st_geomfromtext('POLYGON ((1450 1050 300, 1500 1050 300, 1500 1100 300, 1450 1100 300, 1450 1050 300))',27700)))
+);
+--================================================================================
+
+
+--================================================================================
+--smoke_sensor
+insert into ucesxuf.smoke_sensor (sensor_name, sensor_check_date, location, room_id)
+values
+--('Sensor 1', '1-January-2022',st_geomfromtext('POINT(1025 1025 0)',27700),(select room_id from ucesxuf.storeroom s where st_intersects(s.location, st_geomfromtext('POINT(1025 1025 0)',27700)))),
+--('Sensor 2', '2-January-2022',st_geomfromtext('POINT(1075 1075 300)',27700),(select room_id from ucesxuf.storeroom s where st_intersects(s.location, st_geomfromtext('POINT(1075 1075 300)',27700)))),
+--('Sensor 3', '1-December-2021',st_geomfromtext('POINT(1225 1025 0)',27700),(select room_id from ucesxuf.storeroom s where st_intersects(s.location, st_geomfromtext('POINT(1225 1025 0)',27700)))),
+--('Sensor 4', '24-December-2021',st_geomfromtext('POINT(1275 1075 300)',27700),(select room_id from ucesxuf.storeroom s where st_intersects(s.location, st_geomfromtext('POINT(1275 1075 300)',27700)))),
+--('Sensor 5', '20-December-2021',st_geomfromtext('POINT(1425 1025 0)',27700),(select room_id from ucesxuf.storeroom s where st_intersects(s.location, st_geomfromtext('POINT(1425 1025 0)',27700)))),
+----('Sensor 6', '22-November-2021',st_geomfromtext('POINT(1475 1075 300)',27700),(select room_id from ucesxuf.storeroom s where st_intersects(s.location, st_geomfromtext('POINT(1475 1075 300)',27700))));
+('Sensor 1', '1-January-2022',st_geomfromtext('POINT(1025 1025 0)',27700),1),
+('Sensor 2', '2-January-2022',st_geomfromtext('POINT(1060 1025 0)',27700),1),
+('Sensor 3', '3-January-2022',st_geomfromtext('POINT(1075 1075 300)',27700),2),
+('Sensor 4', '1-December-2021',st_geomfromtext('POINT(1225 1025 0)',27700),3),
+('Sensor 5', '24-December-2021',st_geomfromtext('POINT(1275 1075 300)',27700),4),
+('Sensor 6', '22-November-2021',st_geomfromtext('POINT(1425 1025 0)',27700),5);
+--================================================================================
+
+
+--================================================================================
+--smoke_value
+insert into ucesxuf.smoke_value (sensor_id, reading_timestamp, value)
+values
+((select sensor_id from ucesxuf.smoke_sensor where sensor_name = 'Sensor 1'),'2021-12-02 10:15:00', 29.3),
+((select sensor_id from ucesxuf.smoke_sensor where sensor_name = 'Sensor 1'),'2021-12-22 10:25:00', 31.0),
+((select sensor_id from ucesxuf.smoke_sensor where sensor_name = 'Sensor 1'),'2021-11-02 10:09:00', 24.2),
+((select sensor_id from ucesxuf.smoke_sensor where sensor_name = 'Sensor 1'),'2021-01-01 11:05:00', 31.3),
+((select sensor_id from ucesxuf.smoke_sensor where sensor_name = 'Sensor 2'),'2022-01-02 10:29:00', 24.6),
+((select sensor_id from ucesxuf.smoke_sensor where sensor_name = 'Sensor 2'),'2021-12-24 15:05:00', 27.3),
+((select sensor_id from ucesxuf.smoke_sensor where sensor_name = 'Sensor 2'),'2021-12-03 10:35:00', 29.8),
+((select sensor_id from ucesxuf.smoke_sensor where sensor_name = 'Sensor 3'),'2021-11-22 13:09:00', 27.2),
+((select sensor_id from ucesxuf.smoke_sensor where sensor_name = 'Sensor 3'),'2021-11-23 10:05:00', 28.8),
+((select sensor_id from ucesxuf.smoke_sensor where sensor_name = 'Sensor 3'),'2021-12-23 10:05:00', 26.4),
+((select sensor_id from ucesxuf.smoke_sensor where sensor_name = 'Sensor 3'),'2021-12-29 10:05:00', 28.9),
+((select sensor_id from ucesxuf.smoke_sensor where sensor_name = 'Sensor 4'),'2021-11-02 10:19:00', 32.2),
+((select sensor_id from ucesxuf.smoke_sensor where sensor_name = 'Sensor 4'),'2021-12-23 11:09:00', 34.1),
+((select sensor_id from ucesxuf.smoke_sensor where sensor_name = 'Sensor 4'),'2021-12-19 11:19:00', 32.1),
+((select sensor_id from ucesxuf.smoke_sensor where sensor_name = 'Sensor 5'),'2021-11-29 14:18:00', 27.6),
+((select sensor_id from ucesxuf.smoke_sensor where sensor_name = 'Sensor 5'),'2021-12-12 15:09:00', 28.2),
+((select sensor_id from ucesxuf.smoke_sensor where sensor_name = 'Sensor 5'),'2021-12-19 15:39:00', 27.2),
+((select sensor_id from ucesxuf.smoke_sensor where sensor_name = 'Sensor 6'),'2021-11-12 15:49:00', 28.0),
+((select sensor_id from ucesxuf.smoke_sensor where sensor_name = 'Sensor 6'),'2021-12-23 10:45:00', 29.3),
+((select sensor_id from ucesxuf.smoke_sensor where sensor_name = 'Sensor 6'),'2021-10-29 16:18:00', 27.9);
+--================================================================================
+
+
+--================================================================================
+--parameter
+--worker salary
+insert into ucesxuf.parameter (parameter_type, parameter_name, parameter_subname, parameter_value, parameter_units)
+values
+('cost','storeroom','worker salary',50,'£ per worker per day');
+--check cost
+insert into ucesxuf.parameter (parameter_type, parameter_name, parameter_subname, parameter_value, parameter_units)
+values
+('cost','smoke_sensor','check cost',100,'£ each');
+--================================================================================
+

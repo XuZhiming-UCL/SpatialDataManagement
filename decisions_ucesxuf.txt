@@ -1,0 +1,54 @@
+--SQL Assignment 5
+--Decisions
+--2022.1.7
+
+
+--================================================================================
+--1.H3.Human Comfort and Safety:Smoke sensors that have not been inspected for more than one month (30 days) are considered to have potential safety hazards and need to be inspected again. Select and list the smoke sensors(with corresponding information) that need to be checked.
+select sensor_id, room_number, sensor_check_date from ucesxuf.storeroom_statistics
+where DATE_PART('day', current_date::timestamp - sensor_check_date::timestamp) >30;
+
+--2.H2.Human Comfort and Safety:In order to know the smoke concentration in different areas, calculate the average reading of each sensor in December 2021 then arrange the output in order.
+select sensor_id, avg(value) as avg_value_december from ucesxuf.sensor_statistics
+where reading_timestamp >= '2021-12-01' and reading_timestamp <= '2021-12-31'
+group by sensor_id order by avg_value_december desc;
+--================================================================================
+
+
+
+--================================================================================
+--3.S2.Storage Management:In order to facilitate the loading, unloading and storage of goods, the logistics center needs to master the storage area of each storehouse. Select and list storerooms and related information by the order of area.
+select distinct room_number, center_name, floor, storeroom_area from ucesxuf.storeroom_statistics
+order by storeroom_area desc;
+
+--4.H1.Human Comfort and Safety:We need to know the smoke sensors of each storeroom. How many smoke sensors are there in each storeroom?
+with
+num_sensor as (select count(*) as num, room_number from ucesxuf.storeroom_statistics where sensor_id >0 group by room_number)
+select distinct b.room_number, b.center_name, b.floor, a.num as number_of_sensor
+from ucesxuf.storeroom_statistics b left join num_sensor a
+on a.room_number = b.room_number
+order by center_name, floor;
+
+--5.B2.Budget:In order to check all the sensors that need to be checked, how much money do we need to prepare?(￡100 each)
+with
+check_cost as (select parameter_value from ucesxuf.parameter where parameter_subname='check cost'),
+num_check as (select count(*) as num from ucesxuf.storeroom_statistics where DATE_PART('day', current_date::timestamp - sensor_check_date::timestamp) >30)
+select a.parameter_value * b.num as total_check_cost
+from check_cost a, num_check b;
+
+--6.B1.Budget: The number of workers in each storeroom is different. At ￡50 per worker, what is the cost of employing workers in each storeroom?
+with
+worker_salary as (select parameter_value from ucesxuf.parameter where parameter_subname='worker salary')
+select distinct a.room_number, a.center_name, a.floor, a.worker_number, b.parameter_value as per_worker_salary, b.parameter_value * a.worker_number as room_expenditure_salary
+from ucesxuf.storeroom_statistics a, worker_salary b
+order by room_expenditure_salary desc;
+--================================================================================
+
+
+
+--================================================================================
+--7.S1.Storage Management：The existing inflammable goods covering an area of 5100 square meters are about to arrive. The primary consideration is fire safety (the proportion of smoke sensors per unit area), and the secondary consideration is loading and unloading speed (the more workers, the faster loading and unloading). Which center is recommended for storage?
+select center_name, center_area, sensor_ratio, worker_total from ucesxuf.center_statistics
+where center_area>5100
+order by sensor_ratio desc, worker_total desc;
+--================================================================================

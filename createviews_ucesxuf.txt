@@ -1,0 +1,47 @@
+--SQL Assignment 5
+--Create Views
+--2022.1.6
+
+
+--================================================================================
+create view ucesxuf.sensor_statistics as
+with 
+value_sensor as (
+	select d.smoke_value_id, d.value, d.reading_timestamp, c.room_id, c.sensor_id
+	from ucesxuf.smoke_value d, ucesxuf.smoke_sensor c
+	where d.sensor_id = c.sensor_id
+	),
+storeroom_center as (
+	select a.center_name, b.floor, b.room_id, b.room_number
+	from ucesxuf.storeroom b, ucesxuf.logistics_center a
+	where b.center_id = a.center_id
+	)
+select aa.smoke_value_id, aa.value, aa.reading_timestamp, aa.sensor_id, bb.center_name, bb.floor, bb.room_number
+from value_sensor aa, storeroom_center bb
+where aa.room_id = bb.room_id;
+--================================================================================
+
+
+--================================================================================
+create view ucesxuf.storeroom_statistics as
+select a.center_name, b.floor, b.room_id, b.room_number, st_area(b.location) as storeroom_area, b.worker_number, c.sensor_id, c.sensor_check_date
+from ucesxuf.logistics_center a inner join ucesxuf.storeroom b on a.center_id = b.center_id
+full join ucesxuf.smoke_sensor c on b.room_id = c.room_id;
+--================================================================================
+
+
+--================================================================================
+create view ucesxuf.center_statistics as
+with
+area_table as (select distinct room_number, storeroom_area, center_name from ucesxuf.storeroom_statistics),
+center_area_table as (select sum(area_table.storeroom_area) as center_area, center_name from area_table group by center_name),
+
+sensor_num_table as (select count(*) as sensor_num, center_name from ucesxuf.storeroom_statistics where sensor_id >0 group by center_name),
+sensor_ratio_table as (select a.sensor_num/b.center_area as sensor_ratio, a.center_name from sensor_num_table a, center_area_table b
+						where a.center_name = b.center_name),
+worker_storeroom_table as (select distinct room_number, worker_number, center_name from ucesxuf.storeroom_statistics),
+worker_number_table as (select center_name, sum(worker_storeroom_table.worker_number) as worker_total from worker_storeroom_table group by center_name)
+select a.center_name, a.center_area, b.sensor_ratio, c.worker_total
+from center_area_table a, sensor_ratio_table b, worker_number_table c
+where a.center_name = b.center_name and b.center_name = c.center_name;
+--================================================================================

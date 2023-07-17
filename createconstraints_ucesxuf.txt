@@ -1,0 +1,34 @@
+--SQL Assignment 5
+--Create Constraints
+--2022.1.5
+
+
+--================================================================================
+-- Primary Keys
+-- ALTER TABLE <TABLENAME> ADD CONSTRAINT <CONSTRAINTNAME_PK> PRIMARY KEY(<FIELDNAME>)
+alter table ucesxuf.logistics_center add constraint logistics_center_pk primary key (center_id);
+alter table ucesxuf.storeroom add constraint storeroom_pk primary key (room_id);
+alter table ucesxuf.smoke_sensor add constraint smoke_sensor_pk primary key (sensor_id);
+alter table ucesxuf.parameter add constraint parameter_pk primary key (parameter_id);
+alter table ucesxuf.smoke_value add constraint smoke_value_pk primary key (smoke_value_id);
+--================================================================================
+
+
+--================================================================================
+-- Foreign Keys
+-- ALTER TABLE <TABLENAME> ADD CONSTRAINT <CONSTRAINTNAME_FK> FOREIGN KEY(<FIELDNAME>) REFERENCES <TABLENAME>(<FIELDNAME>)
+alter table ucesxuf.storeroom add constraint storeroom_center_id_fk foreign key(center_id) references ucesxuf.logistics_center(center_id);
+alter table ucesxuf.smoke_sensor add constraint smoke_sensor_room_id_fk foreign key(room_id) references ucesxuf.storeroom(room_id);
+alter table ucesxuf.smoke_value add constraint smoke_value_sensor_id_fk foreign key(sensor_id) references ucesxuf.smoke_sensor(sensor_id);
+--================================================================================
+
+
+--================================================================================
+-- Unique Constraints
+alter table ucesxuf.logistics_center add constraint logistics_center_unique unique (center_name);
+alter table ucesxuf.storeroom add constraint storeroom_unique unique (location,floor);
+alter table ucesxuf.smoke_sensor add constraint smoke_sensor_unique unique (location);
+alter table ucesxuf.parameter add constraint parameter_unique unique (parameter_type, parameter_name, parameter_subname, date_created);
+alter table ucesxuf.smoke_value add constraint smoke_value_unique unique (reading_timestamp, sensor_id);
+--================================================================================
+

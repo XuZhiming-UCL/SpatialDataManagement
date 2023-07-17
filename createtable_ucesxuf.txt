@@ -1,0 +1,80 @@
+--SQL Assignment 5
+--Create Table
+--2022.1.5
+
+
+--================================================================================
+drop schema if exists ucesxuf cascade;
+create schema ucesxuf;
+--================================================================================
+
+
+--================================================================================
+--create logistics_center table
+drop table if exists ucesxuf.logistics_center;
+create table ucesxuf.logistics_center (
+	center_id serial,
+	center_name character varying (200) not null
+);
+--add the geometry column - 3D in this case
+--select AddGeometryColumn('ucesxuf','logistics_center','location',27700, 'geometry',2);
+select AddGeometryColumn('ucesxuf','logistics_center','location',27700, 'geometry',3);
+--================================================================================
+
+
+--================================================================================
+--create storeroom table
+drop table if exists ucesxuf.storeroom;
+create table ucesxuf.storeroom (
+	room_id serial,
+	center_id integer,
+	floor integer not null,
+	worker_number integer not null,
+	room_number character varying (50) not null
+);
+--add the geometry column - 3D in this case, must be a polygon
+alter table ucesxuf.storeroom drop column if exists location;
+select AddGeometryColumn('ucesxuf','storeroom','location',0, 'polygon',3);
+--================================================================================
+
+
+--================================================================================
+--create smoke_sensor table
+drop table if exists ucesxuf.smoke_sensor;
+create table ucesxuf.smoke_sensor (
+	sensor_id serial,
+	room_id integer,
+	sensor_name character varying (50) not null,
+	sensor_check_date date
+);
+--add the geometry columns - 3D point in this case
+select AddGeometryColumn('ucesxuf','smoke_sensor','location',0, 'point',3);
+--================================================================================
+
+
+--================================================================================
+--create parameter table
+drop table if exists ucesxuf.parameter;
+create table ucesxuf.parameter (
+	parameter_id serial,
+	parameter_type character varying (100),
+	parameter_name character varying (150),
+	parameter_subname character varying (150),
+	parameter_value double precision,
+	parameter_units character varying (100),
+	date_created date default CURRENT_DATE
+);
+--================================================================================
+
+
+--================================================================================
+--create smoke_value table
+drop table if exists ucesxuf.smoke_value;
+create table ucesxuf.smoke_value (
+	smoke_value_id serial,
+	sensor_id integer,
+	reading_timestamp timestamp,
+	value double precision
+);
+--================================================================================
+
